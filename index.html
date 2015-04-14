@@ -1,5 +1,49 @@
+<!DOCTYPE html>
 <html>
-  <head>
+  <head lang="en">
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>SLU Trucks</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+    <style>
+      #date {
+        margin-left: 15px;
+      }
+
+      .truck img {
+        width: 100%;
+      }
+
+      .truck.not-here {
+        opacity: 0.3;
+      }
+
+      .truck h4 {
+        width: 100%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      /* Small devices */
+      @media (max-width: 767px) {
+        .truck h4 {
+          font-size: 12px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <nav class="navbar navbar-default">
+      <div class="container">
+        <div class="navbar-header">
+          <a href="#" class="navbar-brand">SLU Trucks <small id="date"></small></a>
+        </div>
+      </div>
+    </nav>
+    <div class="container">
+      <div id="trucks" class="row"></div>
+    </div>
     <script>
       /*********************************************************************
       *  #### Twitter Post Fetcher v13.0 ####
@@ -17,7 +61,7 @@
       (function(root, factory) {
           factory();
       }(this, function() {
-        var domNode = 'example1';
+        var domNode = 'trucks';
         var maxTweets = 1;
         var queue = [];
         var inProgress = false;
@@ -62,14 +106,18 @@
               }
               targetLinksToNewWindow(tweet.getElementsByClassName('e-entry-title')[0]);
               targetLinksToNewWindow(tweet.getElementsByClassName('p-author')[0]);
-              var msg = tweet.getElementsByClassName('e-entry-title')[0].innerHTML;
-              var author = tweet.getElementsByClassName('p-author')[0];
-              var html = '<div>';
-              html += '<div class="user">' + strip(author.innerHTML) +
-                  '</div>';
-              html += '<p>' + msg + '</p>';
-              html += "</div>";
-              document.getElementById(domNode).innerHTML += html;
+              var msg = tweet.getElementsByClassName('e-entry-title')[0].innerHTML.toLowerCase();
+              var isHere = /south lake union|slu|amazon|boren|terry|thomas|republican/.test(msg);
+              var name = tweet.getElementsByClassName('full-name')[0].innerHTML;
+              var img = tweet.getElementsByClassName('avatar')[0];
+              img.src = img.src.replace("normal", "400x400");
+              img.className += ' img-rounded';
+              var div = document.createElement('div');
+              div.className = 'truck ' + (isHere ? 'here' : 'not-here') + ' col-xs-3 col-md-3 col-lg-2';
+              div.innerHTML =
+                    img.outerHTML +
+                    '<h4>' + name + '</h4>';
+              document.getElementById(domNode).appendChild(div);
               inProgress = false;
               break;
             }
@@ -84,13 +132,36 @@
         window.twitterFetcher = twitterFetcher;
         return twitterFetcher;
       }));
-      var ids = ['587441476474273792', '587837524715773952'];
+
+      var ids = [
+        '587864266654396417',  // Chick'n Fix
+        '587865174373044225',  // Falafel Salam
+        '587856310638514177',  // Now Make Me A Sandwich
+        '587865479542222848',  // Poke to the Max
+        '587441476474273792',  // Tat's
+        '587837524715773952',  // Thai-U-Up
+      ];
       ids.forEach(function(id) {
         twitterFetcher.fetch({"id": id});
       });
+
     </script>
-  </head>
-  <body>
-    <div id="example1"></div>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+    <script>
+      $(document).ready(function() {
+        var date = new Date();
+        var days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+        var months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+        $("#date").text(days[date.getDay()] + ', ' + months[date.getMonth()] + ' ' + date.getDate());
+
+        if (date.getHours() < 11 || date.getHours() > 3) {
+          $("#trucks").prepend('<div class="alert alert-warning alert-dismissible" role="alert">' +
+                                  '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>' +
+                                  '<strong>Warning!</strong> You\'re checking this during off-hours, this data is likely stale.' +
+                              '</div>');
+        }
+      });
+    </script>
   </body>
 </html>
