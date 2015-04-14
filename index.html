@@ -155,7 +155,7 @@
         var months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
         $("#date").text(days[date.getDay()] + ', ' + months[date.getMonth()] + ' ' + date.getDate());
 
-        if (date.getHours() < 11 || date.getHours() > 3) {
+        if (date.getHours() < 11 || date.getHours() > 15) {
           $("#trucks").prepend('<div class="alert alert-warning alert-dismissible" role="alert">' +
                                   '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>' +
                                   '<strong>Warning!</strong> You\'re checking this during off-hours, this data is likely stale.' +
