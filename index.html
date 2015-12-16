@@ -62,6 +62,7 @@
           factory();
       }(this, function() {
         var queue = [];
+        var inProgress = false;
 
         var twitterFetcher = {
           fetch: function(config) {
