@@ -107,7 +107,7 @@
               targetLinksToNewWindow(tweet.getElementsByClassName('e-entry-title')[0]);
               targetLinksToNewWindow(tweet.getElementsByClassName('p-author')[0]);
               var msg = tweet.getElementsByClassName('e-entry-title')[0].innerHTML.toLowerCase();
-              var isHere = /south lake union|slu|amazon|boren|terry|thomas|republican/.test(msg);
+              var isHere = /south lake union|slu|amazon|boren|terry|thomas|republican|westlake/.test(msg);
               var name = tweet.getElementsByClassName('full-name')[0].innerHTML;
               var img = tweet.getElementsByClassName('avatar')[0];
               img.src = img.src.replace("normal", "400x400");
@@ -138,6 +138,7 @@
         '587865174373044225',  // Falafel Salam
         '587856310638514177',  // Now Make Me A Sandwich
         '587865479542222848',  // Poke to the Max
+        '677211837188849664', // Stella Fiore Pizza
         '587441476474273792',  // Tat's
         '587837524715773952',  // Thai-U-Up
       ];
