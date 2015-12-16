@@ -61,24 +61,7 @@
       (function(root, factory) {
           factory();
       }(this, function() {
-        var domNode = 'trucks';
-        var maxTweets = 1;
         var queue = [];
-        var inProgress = false;
-        var formatterFunction = 'default';
-
-        function strip(data) {
-          return data.replace(/<b[^>]*>(.*?)<\/b>/gi, function(a,s){return s;})
-              .replace(/class=".*?"|data-query-source=".*?"|dir=".*?"|rel=".*?"/gi,
-              '');
-        }
-
-        function targetLinksToNewWindow(el) {
-          var links = el.getElementsByTagName('a');
-          for (var i = links.length - 1; i >= 0; i--) {
-            links[i].setAttribute('target', '_blank');
-          }
-        }
 
         var twitterFetcher = {
           fetch: function(config) {
@@ -88,7 +71,7 @@
               inProgress = true;
               var script = document.createElement('script');
               script.type = 'text/javascript';
-              script.src = '//cdn.syndication.twimg.com/widgets/timelines/' +
+              script.src = 'https://cdn.syndication.twimg.com/widgets/timelines/' +
                   config.id + '?&lang=en&callback=twitterFetcher.callback&' +
                   'suppress_response_codes=true&rnd=' + Math.random();
               document.getElementsByTagName('head')[0].appendChild(script);
@@ -104,20 +87,20 @@
               if (tweet.getElementsByClassName('retweet-credit').length > 0) {
                 continue;
               }
-              targetLinksToNewWindow(tweet.getElementsByClassName('e-entry-title')[0]);
-              targetLinksToNewWindow(tweet.getElementsByClassName('p-author')[0]);
               var msg = tweet.getElementsByClassName('e-entry-title')[0].innerHTML.toLowerCase();
               var isHere = /south lake union|slu|amazon|boren|terry|thomas|republican|westlake/.test(msg);
               var name = tweet.getElementsByClassName('full-name')[0].innerHTML;
               var img = tweet.getElementsByClassName('avatar')[0];
-              img.src = img.src.replace("normal", "400x400");
+              img.src = img.dataset["src-1x"].replace("normal", "400x400");
               img.className += ' img-rounded';
               var div = document.createElement('div');
               div.className = 'truck ' + (isHere ? 'here' : 'not-here') + ' col-xs-3 col-md-3 col-lg-2';
               div.innerHTML =
+                    '<a href="' + tweet.getElementsByClassName('profile')[0].href + '" target="_blank">' + 
                     img.outerHTML +
-                    '<h4>' + name + '</h4>';
-              document.getElementById(domNode).appendChild(div);
+                    '<h4>' + name + '</h4>'
+                    '</a>';
+              document.getElementById("trucks").appendChild(div);
               inProgress = false;
               break;
             }
@@ -147,7 +130,7 @@
       });
 
     </script>
-    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
     <script>
       $(document).ready(function() {
