@@ -81,7 +81,7 @@
 
       $(document).ready(function() {
         $("#date").text(new Date().toLocaleDateString("en-US", { month: "long", weekday: "long", day: "numeric" }));
-        if (new Date().getHours() < 11 || new Date().getHours() > 15) {
+        if (new Date().getDay() < 1 || new Date().getDay() > 5 || new Date().getHours() < 11 || new Date().getHours() > 15) {
           $("#trucks").prepend(
             '<div class="alert alert-warning alert-dismissible" role="alert">' +
               '<button type="button" class="close" data-dismiss="alert" aria-label="Close">' + 
