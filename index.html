@@ -65,9 +65,8 @@
           fetch: function(id) {
             var script = document.createElement('script');
             script.type = 'text/javascript';
-            script.src = 'https://cdn.syndication.twimg.com/widgets/timelines/' +
-              id + '?&lang=en&callback=twitterFetcher.callback&' +
-              'suppress_response_codes=true&rnd=' + Math.random();
+            script.src = 'https://cdn.syndication.twimg.com/timeline/profile?&screen_name=' + id + 
+              '&callback=twitterFetcher.callback&suppress_response_codes=true&rnd=' + Math.random();
             document.getElementsByTagName('head')[0].appendChild(script);
           },
           callback: function(data) {
@@ -104,15 +103,7 @@
         return twitterFetcher;
       }));
 
-      var ids = [
-        '587864266654396417',  // Chick'n Fix
-        '587865174373044225',  // Falafel Salam
-        '587856310638514177',  // Now Make Me A Sandwich
-        '587865479542222848',  // Poke to the Max
-        '677211837188849664', // Stella Fiore Pizza
-        '587441476474273792',  // Tat's
-        '587837524715773952',  // Thai-U-Up
-      ];
+      var ids = ['ChicknFix', 'FalafelSalam', 'me_sandwich', 'samchoyspoke', 'StellaFiorePizz', 'tatsdeli', 'thaiuup'];
       ids.forEach(function(id) {
         twitterFetcher.fetch(id);
       });
