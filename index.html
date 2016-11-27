@@ -82,22 +82,22 @@
             var div = document.createElement('div');
             div.innerHTML = data.body;
 
-            var tweets = div.getElementsByClassName('tweet');
+            var tweets = div.getElementsByClassName('timeline-Tweet');
             for (i = 0; i < tweets.length; i++) {
               var tweet = tweets[i];
               if (tweet.getElementsByClassName('retweet-credit').length > 0) {
                 continue;
               }
-              var msg = tweet.getElementsByClassName('e-entry-title')[0].innerHTML.toLowerCase();
+              var msg = tweet.getElementsByClassName('timeline-Tweet-text')[0].innerHTML.toLowerCase();
               var isHere = /south lake union|slu|amazon|boren|terry|thomas|republican|westlake/.test(msg);
-              var name = tweet.getElementsByClassName('full-name')[0].innerHTML;
-              var img = tweet.getElementsByClassName('avatar')[0];
+              var name = tweet.getElementsByClassName('TweetAuthor-name')[0].innerHTML;
+              var img = tweet.getElementsByClassName('Avatar')[0];
               img.src = img.dataset["src-1x"].replace("normal", "400x400");
               img.className += ' img-rounded';
               var div = document.createElement('div');
               div.className = 'truck ' + (isHere ? 'here' : 'not-here') + ' col-xs-3 col-md-3 col-lg-2';
               div.innerHTML =
-                    '<a href="' + tweet.getElementsByClassName('profile')[0].href + '" target="_blank">' + 
+                    '<a href="' + tweet.getElementsByClassName('TweetAuthor-link')[0].href + '" target="_blank">' + 
                     img.outerHTML +
                     '<h4>' + name + '</h4>'
                     '</a>';
