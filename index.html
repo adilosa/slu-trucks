@@ -7,29 +7,13 @@
     <title>SLU Trucks</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
     <style>
-      #date {
-        margin-left: 15px;
-      }
+      #date { margin-left: 15px; }
+      .truck img { width: 100%; }
+      .truck.not-here { opacity: 0.3; }
+      .truck h4 { width: 100%; overflow: hidden; text-overflow: ellipsis; }
 
-      .truck img {
-        width: 100%;
-      }
-
-      .truck.not-here {
-        opacity: 0.3;
-      }
-
-      .truck h4 {
-        width: 100%;
-        overflow: hidden;
-        text-overflow: ellipsis;
-      }
-
-      /* Small devices */
       @media (max-width: 767px) {
-        .truck h4 {
-          font-size: 12px;
-        }
+        .truck h4 { font-size: 12px; }
       }
     </style>
   </head>
@@ -44,6 +28,8 @@
     <div class="container">
       <div id="trucks" class="row"></div>
     </div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
     <script>
       /*********************************************************************
       *  #### Twitter Post Fetcher v13.0 ####
@@ -55,71 +41,54 @@
       *  Github: https://github.com/jasonmayes/Twitter-Post-Fetcher
       *  Updates will be posted to this site.
       *
-      *  Modified by Andrew DiLosa (Github @adilosa). Stripped down to 
-      *  perform needed functionality only.
+      *  Modified by @adilosa. Stripped down to needed functionality only.
       *********************************************************************/
-      (function(root, factory) {
-          factory();
-      }(this, function() {
-        var twitterFetcher = {
-          fetch: function(id) {
-            var script = document.createElement('script');
-            script.type = 'text/javascript';
-            script.src = 'https://cdn.syndication.twimg.com/timeline/profile?&screen_name=' + id + 
-              '&callback=twitterFetcher.callback&suppress_response_codes=true&rnd=' + Math.random();
-            document.getElementsByTagName('head')[0].appendChild(script);
-          },
-          callback: function(data) {
-            var div = document.createElement('div');
-            div.innerHTML = data.body;
+      window.twitterFetcher = {
+        callback: function(data) {
+          tweet = $("<div>" + data.body + "</div>").find('.timeline-Tweet')
+            .filter(function(tweet) { return $(tweet).find('.timeline-Tweet-retweetCredit').length == 0; } )
+            .first();
 
-            var tweets = div.getElementsByClassName('timeline-Tweet');
-            for (i = 0; i < tweets.length; i++) {
-              var tweet = tweets[i];
-              if (tweet.getElementsByClassName('retweet-credit').length > 0) {
-                continue;
-              }
-              var msg = tweet.getElementsByClassName('timeline-Tweet-text')[0].innerHTML.toLowerCase();
-              var isHere = /south lake union|slu|amazon|boren|terry|thomas|republican|westlake/.test(msg);
-              var name = tweet.getElementsByClassName('TweetAuthor-name')[0].innerHTML;
-              var img = tweet.getElementsByClassName('Avatar')[0];
-              img.src = img.dataset["src-1x"].replace("normal", "400x400");
-              img.className += ' img-rounded';
-              var div = document.createElement('div');
-              div.className = 'truck ' + (isHere ? 'here' : 'not-here') + ' col-xs-3 col-md-3 col-lg-2';
-              div.innerHTML =
-                    '<a href="' + tweet.getElementsByClassName('TweetAuthor-link')[0].href + '" target="_blank">' + 
-                    img.outerHTML +
-                    '<h4>' + name + '</h4>'
-                    '</a>';
-              document.getElementById("trucks").appendChild(div);
-              inProgress = false;
-              break;
-            }
-          }
-        };
+          var isTruckHere = /south lake union|slu|amazon|boren|terry|thomas|republican|westlake/.test(
+            tweet.find('.timeline-Tweet-text').text().toLowerCase()
+          );
 
-        window.twitterFetcher = twitterFetcher;
-        return twitterFetcher;
-      }));
+          $("#trucks").append(
+            $("<div></div>")
+              .addClass('truck ' + (isTruckHere ? 'here' : 'not-here') + ' col-xs-3 col-md-3 col-lg-2')
+              .append(
+                 $("<a></a>")
+                   .attr({ href: tweet.find('.TweetAuthor-link').attr('href'), target: '_blank' })
+                   .append(
+                     $("<img></img>").attr({ src: tweet.find('.Avatar').data('src-1x').replace("normal", "400x400") })
+                       .addClass('img-rounded')
+                   )
+                   .append($("<h4></h4>").html(tweet.find('.TweetAuthor-name').text()))
+              )
+          );
+        }
+      };
 
-      var ids = ['ChicknFix', 'FalafelSalam', 'me_sandwich', 'samchoyspoke', 'StellaFiorePizz', 'tatsdeli', 'thaiuup'];
-      ids.forEach(function(id) {
-        twitterFetcher.fetch(id);
+      ['ChicknFix', 'FalafelSalam', 'me_sandwich', 'samchoyspoke', 'StellaFiorePizz', 'tatsdeli', 'thaiuup'].forEach(function(id) {
+        $("head").append(
+          $("<script><\/script>").attr({ 
+            type: 'text/javascript', 
+            src: 'https://cdn.syndication.twimg.com/timeline/profile?&callback=twitterFetcher.callback' +
+              '&suppress_response_codes=true&rnd=' + Math.random() + '&screen_name=' + id
+          })
+        );
       });
 
-    </script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
-    <script>
       $(document).ready(function() {
         $("#date").text(new Date().toLocaleDateString("en-US", { month: "long", weekday: "long", day: "numeric" }));
-
         if (new Date().getHours() < 11 || new Date().getHours() > 15) {
           $("#trucks").prepend(
             '<div class="alert alert-warning alert-dismissible" role="alert">' +
-              '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>' +
-              '<strong>Warning!</strong> You\'re checking this during off-hours, this data is likely stale.' +
+              '<button type="button" class="close" data-dismiss="alert" aria-label="Close">' + 
+                '<span aria-hidden="true">&times;</span>' +
+              '</button>' +
+              '<strong>Warning!</strong> ' + 
+              'You\'re checking this during off-hours, this data is likely stale. Trucks are open weekdays 10-2 PT.' +
             '</div>'
           );
         }
@@ -127,3 +96,4 @@
     </script>
   </body>
 </html>
+
